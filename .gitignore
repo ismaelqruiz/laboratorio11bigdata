@@ -1,0 +1,18 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+.terraform.lock.hcl.backup
+
+# Datos locales de Floci
+data/
+
+# Credenciales
+.env
+*.tfvars
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
