@@ -28,3 +28,5 @@ Implementación de una plataforma Big Data local utilizando Terraform y Floci pa
 - Floci
 - AWS CLI
 - Git y GitHub
+## Estado del proyecto
+Infraestructura aprovisionada y verificada localmente mediante Terraform y Floci.
