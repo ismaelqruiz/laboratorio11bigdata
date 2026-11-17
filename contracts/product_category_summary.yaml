@@ -1,0 +1,103 @@
+
+# =========================================================
+# DATA PRODUCT CONTRACT
+# Producto de datos: Resumen de productos por categoría
+# =========================================================
+apiVersion: v1
+kind: DataProduct
+metadata:
+  name: product-category-summary
+  version: "1.0.0"
+  description: >
+    Producto de datos analítico que proporciona indicadores
+    consolidados de productos agrupados por categoría.
+  domain: products
+  owner: data-engineering
+# ---------------------------------------------------------
+# Fuente de datos
+# ---------------------------------------------------------
+source:
+  system: DummyJSON API
+  bronze:
+    bucket: ucv-data-platform
+    path: products/bronze/
+# ---------------------------------------------------------
+# Capas de procesamiento
+# ---------------------------------------------------------
+processing:
+  silver:
+    table: lakehouse.silver.products
+    description: >
+      Datos de productos normalizados, depurados y sin
+      identificadores duplicados.
+
+  gold:
+    table: lakehouse.gold.product_category_summary
+    description: >
+      Indicadores agregados por categoría de producto.
+
+# ---------------------------------------------------------
+# Esquema del producto de datos
+# ---------------------------------------------------------
+
+schema:
+  fields:
+    - name: category
+      type: string
+      description: Categoría del producto.
+
+    - name: product_count
+      type: long
+      description: Cantidad de productos por categoría.
+
+    - name: avg_price
+      type: double
+      description: Precio promedio de los productos.
+
+    - name: avg_rating
+      type: double
+      description: Calificación promedio de los productos.
+
+    - name: total_stock
+      type: long
+      description: Stock total por categoría.
+
+    - name: min_price
+      type: decimal
+      description: Precio mínimo por categoría.
+
+    - name: max_price
+      type: decimal
+      description: Precio máximo por categoría.
+
+    - name: generated_at
+      type: timestamp
+      description: Fecha y hora de generación de los indicadores.
+
+# ---------------------------------------------------------
+# Reglas de calidad
+# ---------------------------------------------------------
+
+quality:
+  rules:
+    - id: Q001
+      description: Cada categoría debe tener una sola fila.
+      condition: unique(category)
+
+    - id: Q002
+      description: La cantidad de productos debe ser positiva.
+      condition: product_count > 0
+
+    - id: Q003
+      description: Los identificadores de Silver no deben ser nulos.
+      condition: product_id IS NOT NULL
+
+# ---------------------------------------------------------
+# Almacenamiento
+# ---------------------------------------------------------
+
+storage:
+  format: Apache Iceberg
+  catalog: lakehouse
+  table: lakehouse.gold.product_category_summary
+  layer: gold
