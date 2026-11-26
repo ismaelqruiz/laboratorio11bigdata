@@ -15,10 +15,27 @@ from awsglue.utils import getResolvedOptions
 
 args = getResolvedOptions(sys.argv, ["JOB_NAME"])
 
-# Crear el contexto de Spark y AWS Glue.
 sc = SparkContext.getOrCreate()
+
 glue_context = GlueContext(sc)
-spark = glue_context.spark_session
+
+spark = (
+    glue_context.spark_session.builder
+    .config(
+        "spark.sql.extensions",
+        "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions"
+    )
+    .config(
+        "spark.sql.catalog.lakehouse",
+        "org.apache.iceberg.spark.SparkCatalog"
+    )
+    .config("spark.sql.catalog.lakehouse.type", "hadoop")
+    .config(
+        "spark.sql.catalog.lakehouse.warehouse",
+        "s3a://ucv-data-platform/products/"
+    )
+    .getOrCreate()
+)
 
 # Inicializar el trabajo.
 job = Job(glue_context)

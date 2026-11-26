@@ -1,0 +1,11 @@
+{
+  "Name": "product_category_summary",
+  "TableType": "EXTERNAL_TABLE",
+  "Parameters": {
+    "table_type": "ICEBERG",
+    "metadata_location": "s3://ucv-data-platform/products/gold/product_category_summary/metadata/v1.metadata.json"
+  },
+  "StorageDescriptor": {
+    "Location": "s3://ucv-data-platform/products/gold/product_category_summary/"
+  }
+}
